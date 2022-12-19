@@ -34,7 +34,7 @@ int** addArray(int *A, int *B, int lA, int lB) {
         Aout[maxI] = num;
     }
     if (overflow == 1) {
-        Aout = realloc(Aout, (maxL + 1) * sizeof(int));
+        Aout = (int *) realloc(Aout, (maxL + 1) * sizeof(int));
         outL[0] = maxL + 1;
         int c = Aout[0];
         for (int i = outL[0] - 2; i >= 0; i--) {

@@ -1,0 +1,20 @@
+    1. Hello world
+    2. Program dodający dwie liczby
+    3. Rozwiązanie równania liniowego
+    4. Rozwiązanie równania kwadratowego
+    5. Prosty kalkulator z nieskończoną pętlą
+    6. Liczenie n! W wersji dla chętnych liczący n! dla bardzo dużych n (wynik przekracza wielkością typ long double)
+    7. Program liczący nty wyraz ciągu Fibonacciego
+    8. Program liczący NWD dwóch liczb
+    9. Program szacujący wartość PI metodą Monte Carlo (zadanie 10 zestaw 2 ze strony prof. Rycerza)
+    10. Program liczący n! rekurencyjnie (poprzez zdefiniowaną funkcję liczącą n!, która sama siebie wywołuje). Zadanie 6 zestaw 2 ze strony prof. Rycerza.
+    11. Program liczący wartość dwumianu Newtona
+    12. Program sprawdzający, czy podany z klawiatury tekst jest palindromem
+    13. Konwersja liczb arabskich na rzymskie (i z powrotem). Zadanie 8 zestaw 2 ze strony prof. Rycerza.
+    14. Zadanie 1 zestaw 1 + zad. 1 zestaw 3 ze strony prof. Rycerza.
+    15. Program konwertujący liczbę z sytemu dziesiętnego na dwójkowy i 16kowy. Dla chętnych na dowolny system aż do 16kowego.
+    16. Szyfrowanie plików (zadanie 13 zestaw 4 ze strony prof. Rycerza).
+    17.  Dla chętnych Modyfikacja kalkulatora (zadanie 14 zestaw 4 ze strony prof. Rycerza)
+    18. Program całkujący dowolną krzywą zadaną w kodzie programu w postaci funkcji. Dla chętnych proszę wykorzystać program z punktu 17 i dać możliwość użytkownikowi wpisania funkcji do całkowania z klawiatury (wskazówka zadanie 18 zestaw 6, ze strony prof. Rycerza)
+    19. Zadania 16 i 17 zestaw 6 ze strony prof. Rycerza.
+    20. Za pomocą struktur proszę stworzyć prostą bazę danych np. biblioteki, która zawierać będzie imię, nazwisko, listę wypożyczonych książek, daty wypożyczenia oraz zwrotu książki.
