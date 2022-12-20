@@ -2,86 +2,134 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include ".\programs\silnia\silnia.c"
-//silnia()
+
 
 //INCLUDE MENU
 #ifdef _WIN32
     #include <conio.h>
+    #include ".\programs\silnia\silnia.c"
+    // addArray()
+    // multiplyArray()
+    // silnia()
+
     #include ".\menu\clearConsoleWin.c"
     // clearConsole()
+    #include ".\menu\setColor.c"
+    // txtColor()
+    // bgColor()
+    #include ".\menu\getArrowDir.c"
+    // getArrowDir()
+    // ARROW_KEY
+    #include ".\menu\menu.c"
+    // typdef UIlist
+    // addMenuOption()
+    // getMenuSize()
+    // moveMenu()
+    // showMenu()
+    // menu
 
-    // arrow key is going like a clock: 
-    // arrow up - 72, arrow rigt - 77, arrow down - 80, arrow left - 75
-    #define ARROW_KEY {0,72,77,80,75} 
     #define ENTER_KEY 13
-#elif __linux__
-    #include ".\menu\getch.c"
-    #include ".\menu\clearConsoleLinux.c"
-    #define ARROW_KEY {1,65,67,66,68} 
-    #define ENTER_KEY 10
-#elif __unix__
-    #include ".\menu\getch.c"
-    #include ".\menu\clearConsoleLinux.c"
-    #define ARROW_KEY {1,65,67,66,68} 
+//#elif __linux__
+#else
+    #include "./menu/getch.c"
+    #include "./menu/clearConsoleLinux.c"
+    // clearConsole()
+    #include "./menu/setColor.c"
+    // txtColor()
+    // bgColor()
+    #include "./menu/getArrowDir.c"
+    // getArrowDir()
+    // ARROW_KEY
+    // IsArrowPressed
+    #include "./menu/menu.c"
+    // typdef UIlist
+    // addMenuOption()
+    // getMenuSize()
+    // moveMenu()
+    // showMenu()
+    // menu
     #define ENTER_KEY 10
 #endif
 
 
-#include ".\menu\setColor.c"
-// txtColor()
-// bgColor()
-#include ".\menu\getArrowDir.c"
-//getArrowDir()
-#include ".\menu\menu.c"
-// typdef UIlist
-// addMenuOption()
-// getMenuSize()
-// moveMenu()
-// showMenu()
-// menu
 
 
-void start() {
+
+int start() {
     printf("hello");
+    return 1;
 }
-void silnaApp() {
-    printf("silnia");
+int silnaApp() {
+    clearConsole();
+    printf("Prosze podac liczbe, zeby obliczyc silnie n!\nn = ");
+    int n;
+    scanf("%d", &n);
+    silnia(n);
+    printf("Nacisnij dowolna klawisze, zeby wrocic do menu...");
+    getch();
+    return 1;
 }
-void exitProgram() {
-    printf("exit");
+int exitProgram() {
+    printf("Exit...");
+    return 0;
+}
+//Declare mainMenu
+int mainMenu();
+
+// int silniaMenu() {
+//     char menuText[][4096] = {"Silnia n! dodatnia","Silnia 0","Cofnij", "Exit"};
+//     resetMenu();
+//     addMenuOption(menuText[0], silnaApp);
+//     addMenuOption(menuText[1], start);
+//     addMenuOption(menuText[2], mainMenu);
+//     addMenuOption(menuText[3], exitProgram);
+//     clearConsole();
+//     showMenu();
+//     return 1;
+// }
+
+int mainMenu() {
+    char menuText[][4096] = {"Silnia n!", "Exit"};
+    resetMenu();
+    addMenuOption(menuText[0], silnaApp);
+    addMenuOption(menuText[1], exitProgram);
+    clearConsole();
+    showMenu();
+    return 1;
 }
 
-void showText(char *a){
-    printf("%s", a);
-}
 int main()
 {
-    char menuText[][4096] = {"Start", "n!", "Exit"};
-    addMenuOption(menuText[0], start);
-    addMenuOption(menuText[1], silnaApp);
-    addMenuOption(menuText[2], exitProgram);
-    showMenu();
+    mainMenu();
 
-    int key = getch();
+    int key;
     // 27 it is Esc button
     // Animation loop
-    int i = 0;
-    while (key != 27){
+    while (key != 9){
+        // waiting for press button
         key = getch();
-
-        int arrowKey = getArrowDir(key);
-        if (arrowKey != 0) {
-            int arrowDiraction = (arrowKey == 1 || arrowKey == 2) ? -1:1;
-            moveMenu(arrowDiraction);
-        }
-
+        // Whe user press enter, it shows option function, and after clear console
         if (key == ENTER_KEY) {
-            selectOption();
-            break;
+            int opitonOut = selectOption();
+            // printf("\n ggg%d", opitonOut);
+            if (opitonOut == 0) {break;}
         }
         clearConsole();
+        // printf("%d", key);
+
+        int arrowKey = getArrowDir(key);
+        if (arrowKey != -1) {
+            int arrowDiraction = (arrowKey == 0 || arrowKey == 1) ? -1:1;
+            moveMenu(arrowDiraction);
+        } 
+        // else {
+        //     continue;
+        // }
+
+        
         showMenu();
+        // printf("My key:%i, arr:%d, index %i\n", key, arrowKey, i);
+        
     }
     return 0;
 }

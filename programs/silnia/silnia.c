@@ -54,7 +54,7 @@ int** addArray(int *A, int *B, int lA, int lB) {
 }
 
 
-int** multiply(int *A, int m, int lA) {
+int** multiplyArray(int *A, int m, int lA) {
     if (m == 1) {
         int **outData = (int **) malloc(2 * sizeof(int));
         int *lA2 = (int *) malloc(1 * sizeof(int));
@@ -106,7 +106,7 @@ int silnia(int num) {
     A[0] = 2;
 
     for (int i = 3; i <= num; i++) {
-        int **newA = multiply(A, i, lA[0]);
+        int **newA = multiplyArray(A, i, lA[0]);
         A = newA[0];
         lA = newA[1];
         // printf("\n\n%d HELLO %d\n", lA[0], i);
@@ -115,7 +115,8 @@ int silnia(int num) {
         // }
 
     }
-    
+    // Shows number
+    printf("n! = ");
     for (int i = 0; i < lA[0]; i++) {
         printf("%d", A[i]);
     }

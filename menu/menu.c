@@ -10,18 +10,23 @@
 typedef struct 
 {
     char texts[MENU_MAX_SIZE][MENU_TEXT_SIZE];
-    void (*callbacs[MENU_MAX_SIZE])();
+    int (*callbacs[MENU_MAX_SIZE])();
     int size;
     int head;
 } UIlist;
 UIlist menu = {{""}, {NULL}, 0, 0};
 //How to put function into another function ?
 //https://www.javatpoint.com/function-pointer-as-argument-in-c#:~:text=We%20cannot%20pass%20the%20function,holds%20the%20address%20of%20arguments.
-UIlist addMenuOption(char *text, void (*callback)()){
+UIlist addMenuOption(char *text, int (*callback)()){
     strcpy(menu.texts[menu.size], text);
     menu.callbacs[menu.size] = callback;
     menu.size++;
     return menu;
+}
+void resetMenu() {
+    menu.size = 0;
+    menu.callbacs[menu.size] = 0;
+    strcpy(menu.texts[menu.size], "");
 }
 int getMenuSize(){
     return menu.size;
@@ -33,17 +38,19 @@ void moveMenu(int move) {
     if (menu.head < 0) {menu.head = menu.size - 1;}
     // printf("MOVE MENU Head:%d, size %d\n", menu.head, menu.size);
 }
-void selectOption() {
-    menu.callbacs[menu.head]();
+int selectOption() {
+    return menu.callbacs[menu.head]();
 }
 
 
 void showMenu() {
     for (int i = 0; i < getMenuSize(); i++) {
         //set color
-        if (menu.head == i) {txtColor(fgBlack);bgColor(bgWhite);}
-        menu.callbacs[i]();
-        printf("\nsize %d, text: %s\n\n", getMenuSize(), menu.texts[i]);
-        if (menu.head == i) {txtColor(resetColor);}
+        if (menu.head == i) {
+            printf("%s%s%s%s\n",fgBlack, bgWhite, menu.texts[i], resetColor);
+        }else {
+            printf("%s\n", menu.texts[i]);
+        }
+        // menu.callbacs[i]();
     }
 }
