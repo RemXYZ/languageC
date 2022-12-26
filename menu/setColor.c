@@ -1,5 +1,6 @@
-// colors
-//https://word-sentences.com/code-examples/how-to-use-ansi-color-codes-to-print-colored-text-to-bash-terminal-from-a-file/
+// SOURCE colors
+// https://word-sentences.com/code-examples/how-to-use-ansi-color-codes-to-print-colored-text-to-bash-terminal-from-a-file/
+// OR https://thesmolt.com/adding-color-text-in-c/
 // back ground colours
 char bgBlack[] = "\e[40m";
 char bgRed[] = "\e[41m";
@@ -53,3 +54,5 @@ void txtColor(char *a){
 void bgColor(char *b){
     printf(" %s",b);
 }
+
+// END OF SOURCE

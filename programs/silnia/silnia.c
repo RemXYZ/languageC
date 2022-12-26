@@ -131,3 +131,11 @@ int silnia(int num) {
     free(A);
     return 1;
 }
+
+long long silniaLight(int n) {
+    long long num = 1;
+    for (int i = 2; i <= n; i++) {
+        num *= i;
+    }
+    return num;
+}

@@ -1,3 +1,4 @@
 void clearConsole() {
-    system("clear");
+    system("printf \"\033c\"");
+    printf("\n");
 }
