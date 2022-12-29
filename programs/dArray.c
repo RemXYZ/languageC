@@ -4,7 +4,7 @@
 // #define GET_TYPE(X) ((X)->GetType((X)))
 typedef struct dCharArray
 {
-    char* a;
+    char* s;
     int maxLength;
     int length;
     void (*set)(dCharArray&, const char*);
@@ -24,18 +24,18 @@ void dCharArraySet(dCharArray &arr, const char* str) {
         arr.maxLength *= 2;
         doRealloc = 1;
     }
-    if (doRealloc) arr.a = (char*) realloc(arr.a, arr.maxLength * sizeof(char*));
+    if (doRealloc) arr.s = (char*) realloc(arr.s, arr.maxLength * sizeof(char*));
 
     printf("Second l:%d dorealoc?: %d\n",arr.maxLength, doRealloc);
 
     arr.length = strLength;
-    // strcpy(arr.a, str);
+    // strcpy(arr.s, str);
     // copy string instead cpystr, but work like cpystr
     for (int i=0; i < arr.length; i++){
-        arr.a[i] = str[i];
+        arr.s[i] = str[i];
     }
-    arr.a[arr.length] = '\0';
-    printf("\nMy text: %s", arr.a);
+    arr.s[arr.length] = '\0';
+    printf("\nMy text: %s", arr.s);
 }
 
 void dCharArrayConcat(dCharArray &arr, const char* str) {
@@ -48,25 +48,25 @@ void dCharArrayConcat(dCharArray &arr, const char* str) {
         arr.maxLength *= 2;
         doRealloc = 1;
     }
-    if (doRealloc) arr.a = (char*) realloc(arr.a, arr.maxLength * sizeof(char*));
+    if (doRealloc) arr.s = (char*) realloc(arr.s, arr.maxLength * sizeof(char*));
 
     for (int i=0; i < (newStrLength - arr.length); i++){
-        arr.a[arr.length + i] = str[i];
-        // printf("Char:%c i:%d.  ",arr.a[arr.length + i], i);
+        arr.s[arr.length + i] = str[i];
+        // printf("Char:%c i:%d.  ",arr.s[arr.length + i], i);
     }
     // set new length
     arr.length = newStrLength;
-    arr.a[arr.length] = '\0';
+    arr.s[arr.length] = '\0';
 
-    printf("\nCat word, %s, Str after cat %s, L after cat:%d dorealoc?: %d\n",str, arr.a, arr.maxLength, doRealloc);
+    printf("\nCat word, %s, Str after cat %s, L after cat:%d dorealoc?: %d\n",str, arr.s, arr.maxLength, doRealloc);
 
 }
 
 void dCharArrayPop(dCharArray &arr, int howLong) {
-        // printf("[Len: %i, Ch: %c]\n",arr.length, arr.a[arr.length - 2]);
+        // printf("[Len: %i, Ch: %c]\n",arr.length, arr.s[arr.length - 2]);
     for (int i = 1; i <= howLong; i++) {
-        // printf("[%c and %i]\n",arr.a[arr.length-i], i);
-        arr.a[arr.length - i] = 0;
+        // printf("[%c and %i]\n",arr.s[arr.length-i], i);
+        arr.s[arr.length - i] = 0;
     }
     arr.length -= howLong;
     printf("\nRGrgrg\n");

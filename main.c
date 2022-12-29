@@ -154,54 +154,21 @@ int mainMenu() {
 
 int main()
 {
-    // char wiersz[ 18 ];
-    // fgets( wiersz, 18, stdin );
-    // printf( "Wczytany tekst: %s\n", wiersz );
-    // return 0;
-    // char* num = decToAny(32, 2);
-    // int i = 0;
-    // printf("gggg");
-    // while (num[i] != '\0'){
-    //     printf("%c", num[i]);
-    //     i++;
-    // }
-    // printf("\n");
 
 
 
-
-    /////////// dARRAY TEST//////////
-    
-    // dCharArray cArr = {(char*) malloc(4 * sizeof(char*)), 4, pu, pu, po};
-    // cArr.a[0] = 'A';
-    // cArr.a[1] = 'L';
-    // cArr.a[2] = 'o';
-    // cArr.a[3] = '\0';
-    // strcpy(cArr.a, "Lo");
-
-    // printf("\n Array: %s", cArr.a);
-    // printf("\nLength: %d ", cArr.length);
-    // cArr.push(cArr);
-    // cArr.pop(cArr);
 
     D_ARR_STRING(dArr, "HelloFIRSTSET");
-    // printf("\n\n%s and length: %d",dArr.a, dArr.length);
     printf("\n");
-    // dArr.set(dArr, "Ther");
     dArr.pop(dArr, 2);
-    printf("Hello?%s, l: %i\n", dArr.a, dArr.length);
+    printf("Hello?%s, l: %i\n", dArr.s, dArr.length);
 
     dArr.cat(dArr, " CONCATENETED!!!");
     dArr.pop(dArr, 5);
-    printf("\n\n\nIT IS 2 TIME Length: %d, size: %d, Tekst: %s\n\n", dArr.length, sizeof(dArr.a)/sizeof(dArr.a[0]), dArr.a);
-    // D_ARR_STRING(dArr2, "Hello2");
-    // printf("%s",D_ARR_STRING_dArr2_BUFFER);
+    printf("\n\n\nIT IS 2 TIME Length: %d, size: %d, Tekst: %s\n\n", dArr.length, sizeof(dArr.s)/sizeof(dArr.s[0]), dArr.s);
 
-    // const char* lol = (char*) malloc(0 * sizeof(char*));
-    // lol = "Hello";
-    // printf("%s\n", lol);
-    // lol = "Loool";
-    // printf("%s and %d", lol, strlen(lol));
+    D_ARR_STRING(inCalc, "(3+4)*2");
+    calculator(inCalc.s);
 
     return 0;
     mainMenu();
