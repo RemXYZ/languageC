@@ -2,18 +2,18 @@
 // more about how to use this: https://stackoverflow.com/questions/5815340/get-the-pointer-of-struct-calling-function
 // well in c I can't use objects ;_;
 // #define GET_TYPE(X) ((X)->GetType((X)))
-typedef struct dCharArray
+typedef struct dString
 {
     char* s;
     int maxLength;
     int length;
-    void (*set)(dCharArray&, const char*);
-    void (*cat)(dCharArray&, const char*);
-    void (*pop)(dCharArray&, int);
-} dCharArray;
+    void (*set)(dString&, const char*);
+    void (*cat)(dString&, const char*);
+    void (*pop)(dString&, int);
+} dString;
 
 
-void dCharArraySet(dCharArray &arr, const char* str) {
+void dStringSet(dString &arr, const char* str) {
     int strLength = strlen(str);
     printf("First init: %s,%d\n", str, strLength);
 
@@ -38,7 +38,7 @@ void dCharArraySet(dCharArray &arr, const char* str) {
     printf("\nMy text: %s", arr.s);
 }
 
-void dCharArrayConcat(dCharArray &arr, const char* str) {
+void dStringConcat(dString &arr, const char* str) {
     int strLength = strlen(str);
     int newStrLength = arr.length + strLength;
     // worke with array memory
@@ -62,7 +62,7 @@ void dCharArrayConcat(dCharArray &arr, const char* str) {
 
 }
 
-void dCharArrayPop(dCharArray &arr, int howLong) {
+void dStringPop(dString &arr, int howLong) {
         // printf("[Len: %i, Ch: %c]\n",arr.length, arr.s[arr.length - 2]);
     for (int i = 1; i <= howLong; i++) {
         // printf("[%c and %i]\n",arr.s[arr.length-i], i);
@@ -77,9 +77,51 @@ void dCharArrayPop(dCharArray &arr, int howLong) {
 // more about "templates" in c: https://www.youtube.com/watch?v=u2ey-ERC_A0&ab_channel=LearnThenTeach
 // const char* D_ARR_STRING_##NAME##_BUFFER = STRING; // buffer string. It looks like var_NAME_var, could be usefull in the future.
 // D - dinamic, ARR - array, D_ARR -  dinamic array
-#define D_ARR_STRING(NAME, STRING)\
-    dCharArray NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dCharArraySet, dCharArrayConcat, dCharArrayPop};\
+#define D_STRING(NAME, STRING)\
+    dString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dStringSet, dStringConcat, dStringPop};\
     NAME.set(NAME, STRING);\
 
-// #define D_ARR_INT(NAME)
-//     dCharArray #NAME = {(char*) malloc(0 * sizeof(char*)), 0, dCharArrayPush, po};
+
+
+
+typedef struct dArrString
+{
+    char** arr;
+    int locLength;
+    int length;
+    void (*push)(dArrString&, const char*);
+    // void (*cat)(dArrString&, const char*);
+    void (*pop)(dArrString&, int);
+    void (*free)(dArrString&);
+} dArrString;
+
+void dArrStringPush(dArrString &arr, const char* str) {
+    int strLength = strlen(str);
+    printf("\nLOOK:%s, %d\n", str, strLength);
+    arr.arr[arr.length] = (char*) malloc(strLength * sizeof(char*));
+    strcpy(arr.arr[arr.length], str);
+
+    arr.length++;
+}
+void dArrStringPop(dArrString &arr, int howLong) {
+        // printf("[Len: %i, Ch: %c]\n",arr.length, arr.s[arr.length - 2]);
+    for (int i = 1; i <= howLong; i++) {
+        // printf("[%c and %i]\n",arr.s[arr.length-i], i);
+        free(arr.arr[arr.length - i]);
+        // arr.arr[arr.length - i] = 0;
+    }
+    arr.length -= howLong;
+}
+void dArrStringFree(dArrString &arr) {
+    arr.pop(arr,arr.length);
+    free(arr.arr);
+}
+
+// more about string array with malloc: https://www.youtube.com/watch?v=4_2BEgOFd0E&ab_channel=PortfolioCourses
+// D - dinamic, ARR - array, D_ARR -  dinamic array
+    // dArrString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dArrStringSet, dArrStringConcat, dArrStringPop};
+#define D_ARR_STRING(NAME, ARR_STRING)\
+    dArrString NAME = {(char**) malloc(0 * sizeof(char*)), 2, 0, dArrStringPush, dArrStringPop, dArrStringFree};\
+    for (int i=0; i < sizeof(ARR_STRING)/sizeof(ARR_STRING[0]);i++)\
+        NAME.push(NAME, ARR_STRING[i]);\
+

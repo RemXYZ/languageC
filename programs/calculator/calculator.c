@@ -1,7 +1,5 @@
-// to reverse Polish notation
-dCharArray toRPN(char* expr){
-    printf("FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n");
-    // operator, and weight is an index
+char findWeight(char* sym) {
+    // operators, and weight is an index
     char operatorS[][32][128] = {
         {"(",")","[","]","\0"},
         {"+","-","\0"},
@@ -11,32 +9,39 @@ dCharArray toRPN(char* expr){
         {'\0'}
     };
     int operatorLen = 5;
-    printf("\n\nD:%d", operatorLen);
-    int len = strlen(expr);
-    D_ARR_STRING(stos, "");
-    D_ARR_STRING(outStr, "");
-    printf("\n\nSTOS:%s", stos.s);
-    return outStr;
-    // # this loop is going throw char in string
-    for (int i=0; i<len; i++){
-        //# this loop is going throw lines in weight
-        for (int oLine = 0; oLine < operatorLen; oLine++) {
+    //# this loop is going throw lines in weight
+    //# oLine is a weight
+    for (int oLine = 0; oLine < operatorLen; oLine++) {
+        //# this loop is going throw columns(symbols) in weight
+        int oCol = 0;
+        while (operatorS[oLine][oCol][0] != '\0') {
+            // printf("\nCHAR:%c", operatorS[oLine][oLineLen][0]);
+            char* operatorStr = operatorS[oLine][oCol];
+            int operatorLen = strlen(operatorStr);
+            for (int i = 0; i < operatorLen; i++){
 
-
-            // DOES NOT WORK HERE
-            int oLineLen = 0;
-            while (operatorS[oLine][oLineLen][0] != '\0') {
-                printf("\nCHAR:%c", operatorS[oLine][oLineLen][0]);
-                oLineLen++;
             }
-            // int oLineLen = 2;
-            //# this loop is going throw columns(symbols) in weight
-            for (int oCol = 0; oCol < oLineLen; oCol++) {
-                printf("\nChar: %c", operatorS[oLine][oCol][0]);
-            }
+            printf("\nChar: %c", operatorS[oLine][oCol][0]);
+            oCol++;
         }
-            
+    }    
+    
+}
+// to reverse Polish notation
+dString toRPN(char* expr){
+    printf("FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n");
+    
+    int len = strlen(expr);
+    D_STRING(stos, "");
+    D_STRING(outStr, "");
+    printf("\n\nSTOS:%s", stos.s);
+    
+    // # this loop is going throw char in expression
+    for (int i=0; i<len; i++){
+        
     }
+
+
     free(stos.s);
     return outStr;
 }

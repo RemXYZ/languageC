@@ -154,11 +154,20 @@ int mainMenu() {
 
 int main()
 {
+    const char heh[][128] = {"XD","LOl","bebe"};
+    D_ARR_STRING(lol, heh);
+    lol.push(lol,"AHAH");
+    lol.pop(lol,2);
+    printf("LOOL:%s\n", lol.arr[0]);
+    printf("LOOL:%s\n", lol.arr[1]);
+    printf("LOOL:%s\n", lol.arr[2]);
+    lol.free(lol);
+    printf("LOOL:%d\n", lol.arr[0]);
+    printf("LOOL:%d\n", lol.arr[1]);
+    printf("LOOL:%d\n", lol.arr[2]);
+    return 0;
 
-
-
-
-    D_ARR_STRING(dArr, "HelloFIRSTSET");
+    D_STRING(dArr, "HelloFIRSTSET");
     printf("\n");
     dArr.pop(dArr, 2);
     printf("Hello?%s, l: %i\n", dArr.s, dArr.length);
@@ -167,7 +176,7 @@ int main()
     dArr.pop(dArr, 5);
     printf("\n\n\nIT IS 2 TIME Length: %d, size: %d, Tekst: %s\n\n", dArr.length, sizeof(dArr.s)/sizeof(dArr.s[0]), dArr.s);
 
-    D_ARR_STRING(inCalc, "(3+4)*2");
+    D_STRING(inCalc, "(3+4)*2");
     calculator(inCalc.s);
 
     return 0;
