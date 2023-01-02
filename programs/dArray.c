@@ -10,12 +10,13 @@ typedef struct dString
     void (*set)(dString&, const char*);
     void (*cat)(dString&, const char*);
     void (*pop)(dString&, int);
+    void (*clear)(dString&);
 } dString;
 
 
 void dStringSet(dString &arr, const char* str) {
     int strLength = strlen(str);
-    printf("First init: %s,%d\n", str, strLength);
+    // printf("First init: %s,%d\n", str, strLength);
 
     // worke with array memory
     int doRealloc = 0;
@@ -26,7 +27,7 @@ void dStringSet(dString &arr, const char* str) {
     }
     if (doRealloc) arr.s = (char*) realloc(arr.s, arr.maxLength * sizeof(char*));
 
-    printf("Second l:%d dorealoc?: %d\n",arr.maxLength, doRealloc);
+    // printf("Second l:%d dorealoc?: %d\n",arr.maxLength, doRealloc);
 
     arr.length = strLength;
     // strcpy(arr.s, str);
@@ -35,7 +36,7 @@ void dStringSet(dString &arr, const char* str) {
         arr.s[i] = str[i];
     }
     arr.s[arr.length] = '\0';
-    printf("\nMy text: %s", arr.s);
+    // printf("\nMy text: %s", arr.s);
 }
 
 void dStringConcat(dString &arr, const char* str) {
@@ -58,7 +59,7 @@ void dStringConcat(dString &arr, const char* str) {
     arr.length = newStrLength;
     arr.s[arr.length] = '\0';
 
-    printf("\nCat word, %s, Str after cat %s, L after cat:%d dorealoc?: %d\n",str, arr.s, arr.maxLength, doRealloc);
+    // printf("\nCat word, %s, Str after cat %s, L after cat:%d dorealoc?: %d\n",str, arr.s, arr.maxLength, doRealloc);
 
 }
 
@@ -66,11 +67,15 @@ void dStringPop(dString &arr, int howLong) {
         // printf("[Len: %i, Ch: %c]\n",arr.length, arr.s[arr.length - 2]);
     for (int i = 1; i <= howLong; i++) {
         // printf("[%c and %i]\n",arr.s[arr.length-i], i);
-        arr.s[arr.length - i] = 0;
+        arr.s[arr.length - i] = '\0';
     }
     arr.length -= howLong;
-    printf("\nRGrgrg\n");
+    // printf("\nRGrgrg\n");
     
+}
+void dStringClear(dString &arr) {
+    arr.s[0] = '\0';
+    arr.length = 0;
 }
 
 // more about macro: https://www.youtube.com/watch?v=JqN4uVgCTWE&ab_channel=CodeVault
@@ -78,7 +83,7 @@ void dStringPop(dString &arr, int howLong) {
 // const char* D_ARR_STRING_##NAME##_BUFFER = STRING; // buffer string. It looks like var_NAME_var, could be usefull in the future.
 // D - dinamic, ARR - array, D_ARR -  dinamic array
 #define D_STRING(NAME, STRING)\
-    dString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dStringSet, dStringConcat, dStringPop};\
+    dString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dStringSet, dStringConcat, dStringPop, dStringClear};\
     NAME.set(NAME, STRING);\
 
 
@@ -97,7 +102,7 @@ typedef struct dArrString
 
 void dArrStringPush(dArrString &arr, const char* str) {
     int strLength = strlen(str);
-    printf("\nLOOK:%s, %d\n", str, strLength);
+    // printf("\nLOOK:%s, %d\n", str, strLength);
     arr.arr[arr.length] = (char*) malloc(strLength * sizeof(char*));
     strcpy(arr.arr[arr.length], str);
 
@@ -121,7 +126,8 @@ void dArrStringFree(dArrString &arr) {
 // D - dinamic, ARR - array, D_ARR -  dinamic array
     // dArrString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dArrStringSet, dArrStringConcat, dArrStringPop};
 #define D_ARR_STRING(NAME, ARR_STRING)\
-    dArrString NAME = {(char**) malloc(0 * sizeof(char*)), 2, 0, dArrStringPush, dArrStringPop, dArrStringFree};\
+    NAME = {(char**) malloc(0 * sizeof(char*)), 2, 0, dArrStringPush, dArrStringPop, dArrStringFree};\
     for (int i=0; i < sizeof(ARR_STRING)/sizeof(ARR_STRING[0]);i++)\
-        NAME.push(NAME, ARR_STRING[i]);\
+        if (ARR_STRING[i][0] != '\0')\
+            NAME.push(NAME, ARR_STRING[i]);\
 
