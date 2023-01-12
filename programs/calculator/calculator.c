@@ -1,103 +1,125 @@
 // #include "../dArray.c"
+#include <math.h>
+
+#define MAX_STACK_SIZE 100
+#define MAX_TOKEN_LEN 50
+
+double stack[MAX_STACK_SIZE];
+int stack_top = -1;
+
+void push(double x) {
+    stack[++stack_top] = x;
+}
+
+double pop() {
+    return stack[stack_top--];
+}
+
+double peek() {
+    return stack[stack_top];
+}
+
+int is_operator(char *token) {
+    return (
+        strcmp(token, "+") == 0 ||
+        strcmp(token, "-") == 0 ||
+        strcmp(token, "*") == 0 ||
+        strcmp(token, "/") == 0 ||
+        strcmp(token, "^") == 0 ||
+        strcmp(token, "sin") == 0 ||
+        strcmp(token, "cos") == 0 ||
+        strcmp(token, "tan") == 0 ||
+        strcmp(token, "cot") == 0 ||
+        strcmp(token, "sqrt") == 0
+    );
+}
+
+double perform_operation(char *token) {
+    double x, y;
+    if (strcmp(token, "+") == 0) {
+        return pop() + pop();
+    } else if (strcmp(token, "-") == 0) {
+        y = pop();
+        x = pop();
+        return x - y;
+    } else if (strcmp(token, "*") == 0) {
+        return pop() * pop();
+    } else if (strcmp(token, "/") == 0) {
+        y = pop();
+        x = pop();
+        return x / y;
+    } else if (strcmp(token, "^") == 0) {
+        y = pop();
+        x = pop();
+        return pow(x, y);
+    } else if (strcmp(token, "sin") == 0) {
+        return sin(pop());
+    } else if (strcmp(token, "cos") == 0) {
+        return cos(pop());
+    } else if (strcmp(token, "tan") == 0) {
+        return tan(pop());
+    } else if (strcmp(token, "cot") == 0) {
+        return 1.0/tan(pop());
+    } else if (strcmp(token, "sqrt") == 0) {
+        return sqrt(pop());
+    } else {
+        printf("Error: Invalid operator %s\n", token);
+        exit(1);
+    }
+}
+
+void eval_rpn(char *expression) {
+    char *token = strtok(expression, " ");
+    while (token != NULL) {
+        if (!is_operator(token)) {
+            push(atof(token));
+        } else {
+            push(perform_operation(token));
+        }
+        token = strtok(NULL, " ");
+    }
+    printf("Result: %lf\n", pop());
+}
+
 char Operators[][32][128] = {
     {"(",")","[","]","\0"},
     {"+","-","\0"},
     {"*","/","%","\0"},
     {"^","!","\0"},
-    {"sin","cos","tg","ctg","\0"},
+    {"sin","cos","tg","ctg", "log","\0"},
     {'\0'}
 };
 
-
-char findWeight(char* sym) {
-    // Operators, and weight is an index
-    int operatorLen = 5;
-    //# this loop is going throw lines in weight
-    //# oLine is a weight
-    for (int oLine = 0; oLine < operatorLen; oLine++) {
-        //# this loop is going throw columns(symbols) in weight
-        int oCol = 0;
-        while (Operators[oLine][oCol][0] != '\0') {
-            // printf("\nCHAR:%c", Operators[oLine][oLineLen][0]);
-            char* operatorStr = Operators[oLine][oCol];
-            int operatorLen = strlen(operatorStr);
-            for (int i = 0; i < operatorLen; i++){
-
-            }
-            printf("\nChar: %c", Operators[oLine][oCol][0]);
-            oCol++;
-        }
-    }    
-    
-}
-
-char* validateSpecialFun(char a) {
-    // int len = strlen(expr);
-    const char specialFun[][32] = {"sin","cos","tg","ctg",'\0'};
-    //# special function buffer
-    // D_STRING(cpecFunBuf, "");
-    char*cpecFunBuf = (char*) malloc(0 * sizeof(char*));
-    int varDetected = 0;
-
-    // //# THIS LOOP WILL FIND OUT IS STRING HAS SPECIAL FUNCTION
-    // //# specFun index
-    // for (int sFi = 0; sFi < sizeof(specialFun) / sizeof(*specialFun); sFi++) {
-    //     // cpecFunBuf.clear(cpecFunBuf);
-    //     cpecFunBuf[0] = '\0';
-    //     varDetected = 0;
-    //     int j = i;
-    //     //# special function letter index
-    //     int sFLi = 0;
-    //     while ((expr[j] == specialFun[sFi][sFLi]) && (j < len)) {
-    //         varDetected = 1;
-    //         // cpecFunBuf.cat(cpecFunBuf, &specialFun[sFi][sFLi]);
-    //         cpecFunBuf[sFLi] = specialFun[sFi][sFLi];
-    //         j++;
-    //         sFLi++;
-    //     }
-    //     cpecFunBuf[sFLi] = '\0';
-    //     for (int q = 0; q < strlen(specialFun[sFi]); q++) {
-    //         if (cpecFunBuf[q] != specialFun[sFi][q]){
-    //             varDetected = 0;
-    //         }
-    //     }
-    //     printf("\n%d [%s, fun %s] is var %i",i,cpecFunBuf, specialFun[sFi], varDetected);
-    // }
-    // return cpecFunBuf;
-}
-
-char validateCalcExpr(char* expr) {
-    int len = strlen(expr);
-    //# this loop is going throw char in expression
-    for (int i=0; i<len; i++){
-
-    }
-}
-
-
 //# To reverse Polish notation function
-dArrString toRPN(char* expr){
+char** toRPN(char* expr){
     printf("FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n");
-    
     int len = strlen(expr);
-    const char emptyStr[][2] = {{""}};
-    dArrString stos;
-    dArrString outStr;
-    D_ARR_STRING(stos, emptyStr);
-    D_ARR_STRING(outStr, emptyStr);
     
-    char specialVar[][32][16] = {"pi",'\0'};
+    char** stos = (char**) malloc(1 * sizeof(char*));
+    stos[0][0] = '\0';
+    char** outStr = (char**) malloc(1 * sizeof(char*));
+    stos[0][0] = '\0';
+    // char** splitedExpr = (char**) malloc(10 * sizeof(char*));
+    char splitedExpr[32][32];
     
-    // # this loop is going throw char in expression
-    for (int i=0; i<len; i++){
-        // findWeight(expr[i]);
-        validateSpecialFun(expr[i]);
-        
-        printf("%c",expr[i]);
+    for (int i = 0; i< len; i++) {
+        int weight = 0;
+        while(Operators[weight][0][0] != '\0') {
+            // operator index
+            int operI = 0;
+            while(Operators[weight][operI][0] != '\0') {
+                char* operator = Operators[weight][operI];
+                int operLen = strlen(operator);
+                
+                printf("HI%s\n", operator);
+                operI++;
+            }
+            weight++;
+        }
+        break;
     }
 
-
-    stos.free(stos);
+    free(stos);
     return outStr;
 }
 // expr = expression

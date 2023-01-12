@@ -2,10 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "./programs/dArrayFun.c"
 #include "./programs/dArray.c"
     // D_ARRAY()
 #include "./programs/silnia/silnia.c"
     // addArray()
+    
     // multiplyArray()
     // silnia()
     // silniaLight()
@@ -154,9 +156,23 @@ int mainMenu() {
 
 int main()
 {
-
-    D_STRING(inCalc, "(asin(a)+4)*2+si");
-    calculator(inCalc.s);
+    // D_STRING_INIT(cpecFunBuf, "gg");
+    // const char emptyStr[][2] = {{""}};
+    // D_ARR_STRING_INIT(outStr, emptyStr);
+    // char a = 'a';
+    // char aStr[] = {a,'\0'};
+    // outStr.push(outStr,aStr);
+    // outStr.push(outStr,cpecFunBuf.s);
+    // outStr.push(outStr,aStr);
+    // outStr.push(outStr,"Hello");
+    // outStr.print(outStr);
+    // return 0;
+    char inCalcInput[] = "Helloasin(a)+4)*2+si";
+    dArrString inCalc;
+    D_STRING(inCalc, inCalcInput);
+    
+    char expr[] = "(sin5+2)*2";
+    calculator(expr);
 
     return 0;
     mainMenu();

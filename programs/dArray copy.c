@@ -7,10 +7,14 @@ typedef struct dString
     char* s;
     int maxLength;
     int length;
+    void (*set)(dString&, const char*);
+    void (*cat)(dString&, const char*);
+    void (*pop)(dString&, int);
+    void (*clear)(dString&);
 } dString;
 
 
-void dStringSet(dString arr, const char* str) {
+void dStringSet(dString &arr, const char* str) {
     int strLength = strlen(str);
     // printf("First init: %s,%d\n", str, strLength);
 
@@ -35,7 +39,7 @@ void dStringSet(dString arr, const char* str) {
     // printf("\nMy text: %s", arr.s);
 }
 
-void dStringConcat(dString arr, const char* str) {
+void dStringConcat(dString &arr, const char* str) {
     // printf("\nSTR%s\n",str);
     int strLength = strlen(str);
     int newStrLength = arr.length + strLength;
@@ -60,7 +64,7 @@ void dStringConcat(dString arr, const char* str) {
 
 }
 
-void dStringPop(dString arr, int howLong) {
+void dStringPop(dString &arr, int howLong) {
         // printf("[Len: %i, Ch: %c]\n",arr.length, arr.s[arr.length - 2]);
     for (int i = 1; i <= howLong; i++) {
         // printf("[%c and %i]\n",arr.s[arr.length-i], i);
@@ -70,7 +74,7 @@ void dStringPop(dString arr, int howLong) {
     // printf("\nRGrgrg\n");
     
 }
-void dStringClear(dString arr) {
+void dStringClear(dString &arr) {
     arr.s[0] = '\0';
     arr.length = 0;
 }
@@ -80,11 +84,11 @@ void dStringClear(dString arr) {
 // const char* D_ARR_STRING_##NAME##_BUFFER = STRING; // buffer string. It looks like var_NAME_var, could be usefull in the future.
 // D - dinamic, ARR - array, D_ARR -  dinamic array
 #define D_STRING_INIT(NAME, STRING)\
-    dString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0};\
-    dStringSet(NAME, STRING);
+    dString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dStringSet, dStringConcat, dStringPop, dStringClear};\
+    NAME.set(NAME, STRING);
 
 #define D_STRING(NAME, STRING)\
-    NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0};\
+    NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dStringSet, dStringConcat, dStringPop, dStringClear};\
     NAME.set(NAME, STRING);
 
 
@@ -95,9 +99,14 @@ typedef struct dArrString
     char** arr;
     int locLength;
     int length;
+    void (*push)(dArrString&, const char*);
+    // void (*cat)(dArrString&, const char*);
+    void (*pop)(dArrString&, int);
+    void (*free)(dArrString&);
+    void (*print)(dArrString&);
 } dArrString;
 
-void dArrStringPush(dArrString arr, const char* str) {
+void dArrStringPush(dArrString &arr, const char* str) {
     int strLength = strlen(str);
     // printf("\nLOOK:%s, %d\n", str, strLength);
     arr.arr[arr.length] = (char*) malloc((strLength+1) * sizeof(char*));
@@ -110,7 +119,7 @@ void dArrStringPush(dArrString arr, const char* str) {
 
     arr.length++;
 }
-void dArrStringPop(dArrString arr, int howLong) {
+void dArrStringPop(dArrString &arr, int howLong) {
         // printf("[Len: %i, Ch: %c]\n",arr.length, arr.s[arr.length - 2]);
     for (int i = 1; i <= howLong; i++) {
         // printf("[%c and %i]\n",arr.s[arr.length-i], i);
@@ -119,11 +128,11 @@ void dArrStringPop(dArrString arr, int howLong) {
     }
     arr.length -= howLong;
 }
-void dArrStringFree(dArrString arr) {
-    // arr.pop(arr,arr.length);
-    // free(arr.arr);
+void dArrStringFree(dArrString &arr) {
+    arr.pop(arr,arr.length);
+    free(arr.arr);
 }
-void dArrStringPrint(dArrString arr) {
+void dArrStringPrint(dArrString &arr) {
     for(int i = 0; i < arr.length; i++) {
         printf("[Index:%d, String: %s]\n",i,arr.arr[i]);
     }
@@ -134,10 +143,10 @@ void dArrStringPrint(dArrString arr) {
 // D - dinamic, ARR - array, D_ARR -  dinamic array
     // dArrString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dArrStringSet, dArrStringConcat, dArrStringPop};
 #define D_ARR_STRING_PARENT(NAME, ARR_STRING)\
-    {(char**) malloc(0 * sizeof(char*)), 2, 0};\
-    // for (int i=0; i < sizeof(ARR_STRING)/sizeof(ARR_STRING[0]);i++)\
-    //     if (ARR_STRING[i][0] != '\0')\
-    //         NAME.push(NAME, ARR_STRING[i]);
+    {(char**) malloc(0 * sizeof(char*)), 2, 0, dArrStringPush, dArrStringPop, dArrStringFree, dArrStringPrint};\
+    for (int i=0; i < sizeof(ARR_STRING)/sizeof(ARR_STRING[0]);i++)\
+        if (ARR_STRING[i][0] != '\0')\
+            NAME.push(NAME, ARR_STRING[i]);
 
 
 #define D_ARR_STRING(NAME, ARR_STRING)\
