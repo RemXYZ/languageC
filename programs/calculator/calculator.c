@@ -92,7 +92,7 @@ char Operators[][32][128] = {
 
 //# To reverse Polish notation function
 char** toRPN(char* expr){
-    printf("FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n");
+    printf("%s FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n", expr);
     int len = strlen(expr);
     
     char** stos = (char**) malloc(1 * sizeof(char*));

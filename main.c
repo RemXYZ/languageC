@@ -156,23 +156,12 @@ int mainMenu() {
 
 int main()
 {
-    // D_STRING_INIT(cpecFunBuf, "gg");
-    // const char emptyStr[][2] = {{""}};
-    // D_ARR_STRING_INIT(outStr, emptyStr);
-    // char a = 'a';
-    // char aStr[] = {a,'\0'};
-    // outStr.push(outStr,aStr);
-    // outStr.push(outStr,cpecFunBuf.s);
-    // outStr.push(outStr,aStr);
-    // outStr.push(outStr,"Hello");
-    // outStr.print(outStr);
-    // return 0;
-    char inCalcInput[] = "Helloasin(a)+4)*2+si";
-    dArrString inCalc;
-    D_STRING(inCalc, inCalcInput);
-    
-    char expr[] = "(sin5+2)*2";
-    calculator(expr);
+    // char inCalcInput[] = "Helloasin(a)+4)*2+si";
+    dString inCalc;
+    D_STRING(inCalc, "Helloasin(a)+4)*2+si");
+    dStringConcat(&inCalc, "LOL");
+    // printf("%s", inCalc.s);
+    calculator(inCalc.s);
 
     return 0;
     mainMenu();
