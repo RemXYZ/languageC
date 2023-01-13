@@ -40,7 +40,7 @@ void dStringConcat(dString *arr, const char* str) {
     // printf("\nSTR%s\n",str);
     int strLength = strlen(str);
     int newStrLength = arr->length + strLength;
-    // worke with array memory
+    // work with array memory
     int doRealloc = 0;
     if (arr->maxLength <= strLength)
     while (arr->maxLength <= strLength){
@@ -82,7 +82,7 @@ void dStringClear(dString *arr) {
 // D - dinamic, ARR - array, D_ARR -  dinamic array
 
 #define D_STRING(NAME, STRING)\
-    NAME.s = (char*) malloc(0 * sizeof(char*));\
+    NAME.s = (char*) malloc(2 * sizeof(char*));\
     NAME.maxLength = 2;\
     NAME.length = 0;\
     dStringSet(&NAME, STRING);
@@ -94,31 +94,47 @@ void dStringClear(dString *arr) {
 
 
 
-
-
-
-
-
 typedef struct dArrString
 {
     char** arr;
-    int locLength;
+    int maxLength;
     int length;
 } dArrString;
 
 void dArrStringPush(dArrString *arr, const char* str) {
+    // printf("\n%s STRING PUSH \n", str);
     int strLength = strlen(str);
     // printf("\nLOOK:%s, %d\n", str, strLength);
     arr->arr[arr->length] = (char*) malloc((strLength+1) * sizeof(char*));
-    // printf("\nSTRMAIN:%s, LEN:%d, arrl:%d",str, strLength, arr->length);
+
+
+    //# 2D REALLOC DON'T WORK
+    // int binLength = 2;
+    // REALLOC TO MAIN ARRAY
+    // int doRealloc = 0;
+    // while (arr->maxLength < (arr->length+1)) {
+    //     arr->maxLength *= 2;
+    //     doRealloc = 1;
+    // }
+    // printf("%c and %d\n", str[0], arr->maxLength);
+    // if (doRealloc) arr->arr = (char*) realloc(arr->arr, arr->maxLength * sizeof(char*));
+    
+
+    //# WORK SIMULAR TO STRCPY
     // for (int i=0; i < strLength; i++){
     //     arr->arr[arr->length][i] = str[i];
     // }
     // arr->arr[arr->length][strLength] = '\0';
     strcpy(arr->arr[arr->length], str);
-
     arr->length++;
 }
+
+void dArrStringPushChar(dArrString *arr, char oneChar) {
+    // printf("\n%cHIIII\n", oneChar);
+    const char bufferChar[] = {oneChar, '\0'};
+    dArrStringPush(arr, bufferChar);
+}
+
 void dArrStringPop(dArrString *arr, int howLong) {
         // printf("[Len: %i, Ch: %c]\n",arr->length, arr->s[arr->length - 2]);
     for (int i = 1; i <= howLong; i++) {
@@ -127,12 +143,16 @@ void dArrStringPop(dArrString *arr, int howLong) {
         // arr->arr[arr->length - i] = 0;
     }
     arr->length -= howLong;
+
 }
 void dArrStringFree(dArrString *arr) {
-    // arr->pop(arr,arr->length);
-    // free(arr->arr);
+    dArrStringPop(arr,arr->length);
+    free(arr->arr);
+
 }
+
 void dArrStringPrint(dArrString *arr) {
+    printf("[Array length: %d]\n",arr->length);
     for(int i = 0; i < arr->length; i++) {
         printf("[Index:%d, String: %s]\n",i,arr->arr[i]);
     }
@@ -142,20 +162,13 @@ void dArrStringPrint(dArrString *arr) {
 // more about string array with malloc: https://www.youtube.com/watch?v=4_2BEgOFd0E&ab_channel=PortfolioCourses
 // D - dinamic, ARR - array, D_ARR -  dinamic array
     // dArrString NAME = {(char*) malloc(0 * sizeof(char*)), 2, 0, dArrStringSet, dArrStringConcat, dArrStringPop};
-#define D_ARR_STRING_PARENT(NAME, ARR_STRING)\
-    
-
-
-#define D_ARR_STRING(NAME, ARR_STRING)\
-    NAME.arr = (char**) malloc(0 * sizeof(char*))\
-    NAME.locLength = 2;\
+#define D_ARR_STRING(NAME)\
+    NAME.arr = (char**) malloc(4096 * sizeof(char*))\
+    NAME.maxLength = 4096;\
     NAME.length = 0;\
-    for (int i=0; i < sizeof(ARR_STRING)/sizeof(ARR_STRING[0]);i++)\
-        if (ARR_STRING[i][0] != '\0')\
-            dArrStringPush(&NAME, ARR_STRING[i]);
     
 
 
-#define D_ARR_STRING_INIT(NAME, ARR_STRING)\
+#define D_ARR_STRING_INIT(NAME)\
     dArrString NAME;\
-    D_ARR_STRING(NAME, ARR_STRING);
+    // D_ARR_STRING(NAME, ARR_STRING);

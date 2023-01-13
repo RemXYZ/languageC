@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 #include "./programs/dArrayFun.c"
 #include "./programs/dArray.c"
@@ -156,9 +158,8 @@ int mainMenu() {
 
 int main()
 {
-    // char inCalcInput[] = "Helloasin(a)+4)*2+si";
     dString inCalc;
-    D_STRING(inCalc, "Helloasin(a)+4)*2+si");
+    D_STRING(inCalc, "cosa(a)");
     dStringConcat(&inCalc, "LOL");
     // printf("%s", inCalc.s);
     calculator(inCalc.s);

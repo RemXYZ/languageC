@@ -81,45 +81,124 @@ void eval_rpn(char *expression) {
     printf("Result: %lf\n", pop());
 }
 
-char Operators[][32][128] = {
-    {"(",")","[","]","\0"},
-    {"+","-","\0"},
-    {"*","/","%","\0"},
-    {"^","!","\0"},
+char Operators[][8][16] = {
+    {"(",")","[","]",""},
+    {"+","-",""},
+    {"*","/","%",""},
+    {"^","!",""},
     {"sin","cos","tg","ctg", "log","\0"},
     {'\0'}
 };
+int OperatorsLines = 5;
+char OperatorFun[][16] = {"sin","cos","tg","ctg", "log"};
+int OperatorsFunLen = 5;
 
-//# To reverse Polish notation function
-char** toRPN(char* expr){
-    printf("%s FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n", expr);
+
+dArrString splitExpr(char* expr) {
     int len = strlen(expr);
-    
-    char** stos = (char**) malloc(1 * sizeof(char*));
-    stos[0][0] = '\0';
-    char** outStr = (char**) malloc(1 * sizeof(char*));
-    stos[0][0] = '\0';
+    dArrString splitedExpr;
+    D_ARR_STRING(;splitedExpr);
     // char** splitedExpr = (char**) malloc(10 * sizeof(char*));
-    char splitedExpr[32][32];
+    // char splitedExpr[32][32];
     
+    char varBuffer[16] = {'\0'};
+    int varBufferLen = 0;
+    int isVar = 0;
+
     for (int i = 0; i< len; i++) {
-        int weight = 0;
-        while(Operators[weight][0][0] != '\0') {
-            // operator index
+        if (isdigit(expr[i])) {
+            dArrStringPushChar(&splitedExpr, expr[i]);
+            continue;
+        }
+        //# if char is variable
+        if (isalpha(expr[i])) {
+            isVar = 1;
+            varBuffer[varBufferLen] = expr[i];
+            varBuffer[varBufferLen + 1] = '\0';
+            varBufferLen++;
+            // printf("%s\n", varBuffer);
+
+            for (int j = 0; j < OperatorsFunLen; j++) {
+                int funLen = strlen(OperatorFun[j]);
+                //# cI = char index
+                int cI = 0;
+                // printf("LEN IS B:%d F:%d cB: %c, cF: %c\n", varBufferLen, funLen, varBuffer[cI], OperatorFun[j][cI]);
+                while((varBuffer[cI] == OperatorFun[j][cI]) && (varBufferLen == funLen) && cI < funLen) {
+                    // printf("OK %c i: %d\n", varBuffer[cI], cI);
+                    cI++;
+                }
+                if ((cI) == funLen) {
+                    dArrStringPush(&splitedExpr, varBuffer);
+                    varBufferLen = 0;
+                    varBuffer[varBufferLen] = '\0';
+                    isVar = 0;
+                }
+
+                // //# fCI = function char index
+                // for (int fCI = 0; fCI < funLen; fCI++) {
+                //     //# cI = char index
+                //     if (varBuffer[fCI] == OperatorFun[j][fCI]) {
+                //         printf("%c is OK\n", varBuffer[fCI]);
+                //     }
+                    
+                // }
+                    
+            }
+            continue;
+        }
+        if (isVar) {
+            dArrStringPush(&splitedExpr, varBuffer);
+            varBufferLen = 0;
+            varBuffer[varBufferLen] = '\0';
+            isVar = 0;
+        }
+        //# THIS LOOP LOOKING FOR OPERATORS
+        //# first square brackets {},
+        for (int weight = 0; weight < OperatorsLines; weight++){
+            //# operator index
+            //# second square brackets {""}
             int operI = 0;
             while(Operators[weight][operI][0] != '\0') {
+                //# third square brackets {"(",")","\0"},
                 char* operator = Operators[weight][operI];
+                // printf("%c lol %c is var ? %d\n",expr[i], operator[0], isVar);
                 int operLen = strlen(operator);
-                
-                printf("HI%s\n", operator);
+                //# if char is operator
+                if (operator[0] == expr[i]) {
+                    dArrStringPushChar(&splitedExpr, operator[0]);
+                }
+                // printf("HI%s\n", operator);
                 operI++;
+                
             }
-            weight++;
+            // weight++;
         }
-        break;
+        // break;
     }
 
-    free(stos);
+    //# if last element was variable
+    if (varBufferLen!=0) dArrStringPush(&splitedExpr, varBuffer);
+
+    return splitedExpr;
+}
+
+
+//# To reverse Polish notation function
+dArrString toRPN(char* expr){
+    int len = strlen(expr);
+    printf("%s, LEN: %d FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n", expr, len);
+    
+
+    dArrString stos;
+    D_ARR_STRING(;stos);
+    // char** outStr = (char**) malloc(1 * sizeof(char*));
+    dArrString outStr;
+    D_ARR_STRING(;outStr);
+    
+    dArrString splitedExpr = splitExpr(expr);
+    dArrStringPrint(&splitedExpr);
+
+    dArrStringFree(&stos);
     return outStr;
 }
 // expr = expression
