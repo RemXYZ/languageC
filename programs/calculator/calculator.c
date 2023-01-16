@@ -82,16 +82,15 @@ void eval_rpn(char *expression) {
 }
 
 char Operators[][8][16] = {
-    {"(",")","[","]",""},
-    {"+","-",""},
-    {"*","/","%",""},
-    {"^","!",""},
-    {"sin","cos","tg","ctg", "log","\0"},
+    {"(",")","\0"},
+    {"+","-","\0"},
+    {"*","/","%","\0"},
+    {"^","\0"},
+    {"sin","cos","tg","ctg", "log", "sqrt", "\0"},
     {'\0'}
 };
 int OperatorsLines = 5;
-char OperatorFun[][16] = {"sin","cos","tg","ctg", "log"};
-int OperatorsFunLen = 5;
+char OperatorFun[][16] = {"sin","cos","tg","ctg", "log", "sqrt"};
 
 
 dArrString splitExpr(char* expr) {
@@ -105,10 +104,24 @@ dArrString splitExpr(char* expr) {
     int varBufferLen = 0;
     int isVar = 0;
 
+    char numBuffer[16] = {'\0'};
+    int numBufferLen = 0;
+    int isNum = 0;
+
     for (int i = 0; i< len; i++) {
         if (isdigit(expr[i])) {
-            dArrStringPushChar(&splitedExpr, expr[i]);
+            isNum = 1;
+            numBuffer[numBufferLen] = expr[i];
+            numBuffer[numBufferLen + 1] = '\0';
+            numBufferLen++;
+            // dArrStringPushChar(&splitedExpr, expr[i]);
             continue;
+        }
+        if (isNum) {
+            dArrStringPush(&splitedExpr, numBuffer);
+            numBufferLen = 0;
+            numBuffer[numBufferLen] = '\0';
+            isNum = 0;
         }
         //# if char is variable
         if (isalpha(expr[i])) {
@@ -118,7 +131,7 @@ dArrString splitExpr(char* expr) {
             varBufferLen++;
             // printf("%s\n", varBuffer);
 
-            for (int j = 0; j < OperatorsFunLen; j++) {
+            for (int j = 0; j < sizeof(OperatorFun)/sizeof(*OperatorFun); j++) {
                 int funLen = strlen(OperatorFun[j]);
                 //# cI = char index
                 int cI = 0;
@@ -178,25 +191,151 @@ dArrString splitExpr(char* expr) {
 
     //# if last element was variable
     if (varBufferLen!=0) dArrStringPush(&splitedExpr, varBuffer);
+    if (numBufferLen!=0) dArrStringPush(&splitedExpr, numBuffer);
 
     return splitedExpr;
 }
 
+// void pushToStos(dArrString *stos, dArrString *stosW, dArrString *splitedExpr) {
+//     dArrStringPush(stos, splitedExpr->arr[i]);
+//     dArrStringPushChar(stosW, (char)weight);
+// }
+
+// void intToChar(int i, char* ch) {
+//     int j = 0;
+//     while(i > 0) {
+//         char intCh = (i % 10) + '0';
+//         ch[j] = intCh;
+//         ch[j + 1] = '\0';
+//         i /= 10;
+//         j++;
+//     }
+// }
 
 //# To reverse Polish notation function
 dArrString toRPN(char* expr){
     int len = strlen(expr);
     printf("%s, LEN: %d FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n", expr, len);
     
+    dArrString splitedExpr = splitExpr(expr);
+    printf("DATA\n");
+    dArrStringPrint(&splitedExpr);
 
     dArrString stos;
     D_ARR_STRING(;stos);
+    //# stos weight
+    dArrString stosW;
+    D_ARR_STRING(;stosW);
     // char** outStr = (char**) malloc(1 * sizeof(char*));
     dArrString outStr;
     D_ARR_STRING(;outStr);
-    
-    dArrString splitedExpr = splitExpr(expr);
-    dArrStringPrint(&splitedExpr);
+
+    // converting to RPN
+    for (int i = 0; i < splitedExpr.length; i++) {
+        if (isdigit(splitedExpr.arr[i][0])) {
+            dArrStringPush(&outStr, splitedExpr.arr[i]);
+        }
+        //# THIS LOOP LOOKING FOR OPERATORS
+        //# first square brackets {},
+        for (int weight = 0; weight < OperatorsLines; weight++){
+            char weightCh[4];
+            //# convert int to string, 
+            //# more: https://stackoverflow.com/questions/9655202/how-to-convert-integer-to-string-in-c
+            itoa(weight, weightCh, 10);
+            
+            //# operator index
+            //# second square brackets {""}
+            int operI = 0;
+            while(Operators[weight][operI][0] != '\0') {
+                //# third square brackets {"(",")","\0"},
+                char* operator = Operators[weight][operI];
+                // printf("%c lol %c is var ? %d\n",expr[i], operator[0], isVar);
+                int operLen = strlen(operator);
+
+                //# if char is operator
+                //# strcmp string compre - porównuje string, zwraca 0 jeśli są równe
+                //# lub operator jest równy (
+                // printf("HIII  %s NUM %s\n", operator, splitedExpr.arr[i]);
+                if (!strcmp(operator, splitedExpr.arr[i])) {
+                    dArrStringPrint(&stos);
+                    printf("HELLO %s and %s\n", splitedExpr.arr[i], operator);
+                    if ( (stos.length == 0) || (operator[0] == '(')) {
+                        dArrStringPush(&stos, splitedExpr.arr[i]);
+                        dArrStringPush(&stosW, weightCh);
+                        
+                    }
+                    // # lub waga dwuch operatorów jest taka sama, to powinno być else if, 
+                    // # bo jezeli dodam w pierwszy warunek, a stos bedzie pusty, to wyswietli sie blad
+                    //# atoi convert str to int
+                    //# more: https://www.geeksforgeeks.org/convert-string-to-int-in-c/
+                    else if( atoi(stosW.arr[stosW.length-1]) < weight){
+                        
+                        dArrStringPush(&stos, splitedExpr.arr[i]);
+                        dArrStringPush(&stosW, weightCh);
+                    }
+                    else {
+                        //stI = stos index
+                        int stI = stos.length-1;
+                        while( (stI >= 0) && (atoi(stosW.arr[stI]) >= weight)) {
+                            printf("RGREGERG %d, W %s, w %s, INDEX: %d\n", (atoi(stosW.arr[stI]) >= weight), stos.arr[stI], operator, stI);
+                            // printf("Op %s, dla ( %d, dla ) %d, all %d\n", stosW.arr[stI], strcmp(stos.arr[stI],"("), strcmp(stos.arr[stI],")"), ((strcmp(stos.arr[stI],"(") != 0) & (strcmp(stos.arr[stI],")") != 0)));
+                            
+                            if ((strcmp(stos.arr[stI],"(") != 0) & (strcmp(stos.arr[stI],")") != 0)) {
+                                printf("RGREGREGERER\n");
+                                dArrStringPush(&outStr, stos.arr[stI]);
+                            }
+                            
+                            
+                            dArrStringPop(&stos, 1);
+                            dArrStringPop(&stosW, 1);
+                            // printf("HII\n");
+                            if ( operator[0] == '(' & strcmp(stos.arr[stI],"(") ) {
+                                printf("LOOL");
+                                stI = -1;
+                            }
+
+                            if ((stos.length == 0)) {
+                                dArrStringPush(&stos, splitedExpr.arr[i]);
+                                dArrStringPush(&stosW, weightCh);
+                            }
+                            else if( (atoi(stosW.arr[stosW.length-1]) < weight) ){
+                            
+                                dArrStringPush(&stos, splitedExpr.arr[i]);
+                                dArrStringPush(&stosW, weightCh);
+                            }
+                            stI--;
+                            // printf("RGREGERG %d\n", stI);
+                            
+                        }
+                    }
+                    
+                }
+                // printf("HI%s\n", operator);
+                operI++;
+                
+                
+            }
+            // weight++;
+        }
+    }
+    int stI = stos.length-1;
+    while( (stI >= 0)) {
+        if ((strcmp(stos.arr[stI],"(") != 0) & (strcmp(stos.arr[stI],")") != 0)) {
+            dArrStringPush(&outStr, stos.arr[stI]);
+        }
+        dArrStringPop(&stos, 1);
+        dArrStringPop(&stosW, 1);
+        stI--;
+        // printf("RGREGERG %d\n", stI);
+        
+    }
+
+    printf("\n\n\nSTOS\n");
+    dArrStringPrint(&stos);
+    printf("STOSW\n");
+    dArrStringPrint(&stosW);
+    printf("OUT\n");
+    dArrStringPrint(&outStr);
 
     dArrStringFree(&stos);
     return outStr;

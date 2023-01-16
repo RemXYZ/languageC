@@ -135,6 +135,12 @@ void dArrStringPushChar(dArrString *arr, char oneChar) {
     dArrStringPush(arr, bufferChar);
 }
 
+void dArrStringPushCharPtr(dArrString *arr, char oneChar) {
+    // printf("\n%cHIIII\n", oneChar);
+    const char bufferChar[] = {oneChar, '\0'};
+    dArrStringPush(arr, bufferChar);
+}
+
 void dArrStringPop(dArrString *arr, int howLong) {
         // printf("[Len: %i, Ch: %c]\n",arr->length, arr->s[arr->length - 2]);
     for (int i = 1; i <= howLong; i++) {
@@ -152,7 +158,7 @@ void dArrStringFree(dArrString *arr) {
 }
 
 void dArrStringPrint(dArrString *arr) {
-    printf("[Array length: %d]\n",arr->length);
+    printf("[~Array length: %d~]\n",arr->length);
     for(int i = 0; i < arr->length; i++) {
         printf("[Index:%d, String: %s]\n",i,arr->arr[i]);
     }

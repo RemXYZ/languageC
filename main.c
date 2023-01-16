@@ -159,8 +159,9 @@ int mainMenu() {
 int main()
 {
     dString inCalc;
-    D_STRING(inCalc, "cosa(a)");
-    dStringConcat(&inCalc, "LOL");
+    D_STRING(inCalc, "sqrt(4+12)*3");
+    // D_STRING(inCalc, "14-2*3+7-3");
+    // dStringConcat(&inCalc, "LOL");
     // printf("%s", inCalc.s);
     calculator(inCalc.s);
 
