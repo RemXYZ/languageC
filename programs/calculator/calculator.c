@@ -220,6 +220,7 @@ dArrString toRPN(char* expr){
     dArrString splitedExpr = splitExpr(expr);
     printf("DATA\n");
     dArrStringPrint(&splitedExpr);
+    printf("\n");
 
     dArrString stos;
     D_ARR_STRING(;stos);
@@ -277,9 +278,9 @@ dArrString toRPN(char* expr){
                         //stI = stos index
                         int stI = stos.length-1;
                         while( (stI >= 0) && (atoi(stosW.arr[stI]) >= weight)) {
-                            printf("RGREGERG %d, W %s, w %s, INDEX: %d\n", (atoi(stosW.arr[stI]) >= weight), stos.arr[stI], operator, stI);
+                            printf("START --DELETE -- \nw=[%d,%d], prev op %s, my op %c, INDEX: %d\n", atoi(stosW.arr[stI]) , weight, stos.arr[stI], operator[0], stI);
                             // printf("Op %s, dla ( %d, dla ) %d, all %d\n", stosW.arr[stI], strcmp(stos.arr[stI],"("), strcmp(stos.arr[stI],")"), ((strcmp(stos.arr[stI],"(") != 0) & (strcmp(stos.arr[stI],")") != 0)));
-                            
+
                             if ((strcmp(stos.arr[stI],"(") != 0) & (strcmp(stos.arr[stI],")") != 0)) {
                                 printf("RGREGREGERER\n");
                                 dArrStringPush(&outStr, stos.arr[stI]);
@@ -289,8 +290,11 @@ dArrString toRPN(char* expr){
                             dArrStringPop(&stos, 1);
                             dArrStringPop(&stosW, 1);
                             // printf("HII\n");
-                            if ( operator[0] == '(' & strcmp(stos.arr[stI],"(") ) {
+                            printf("prev op2 %d\n", stos.arr[stI][0] == '(');
+                            if ( (operator[0] == ')') & (stos.arr[stI][0] == '(') ) {
                                 printf("LOOL");
+                                // dArrStringPop(&stos, 1);
+                                // dArrStringPop(&stosW, 1);
                                 stI = -1;
                             }
 

@@ -161,6 +161,9 @@ int main()
     dString inCalc;
     D_STRING(inCalc, "sqrt(4+12)*3");
     // D_STRING(inCalc, "14-2*3+7-3");
+    // D_STRING(inCalc, "14-(2-4*5+33)*3");
+    // D_STRING(inCalc, "5*(5+3)-5*(4+3)");
+    // D_STRING(inCalc, "1*(5+(3*2)*(2+3))");
     // dStringConcat(&inCalc, "LOL");
     // printf("%s", inCalc.s);
     calculator(inCalc.s);
