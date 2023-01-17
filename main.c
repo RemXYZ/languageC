@@ -131,7 +131,11 @@ int decToAnyApp() {
 }
 // Kalkulator zadanie 14 z zestawu 4
 int calculatorApp(){
-
+    printf("Proszę podać wyrażenie: ");
+    char expr[4096];
+    fgets(expr, sizeof(expr), stdin);
+    dString inCalc;
+    D_STRING(inCalc, expr);
     return 1;
 }
 
@@ -158,9 +162,10 @@ int mainMenu() {
 
 int main()
 {
-    dString inCalc;
-    D_STRING(inCalc, "sqrt(4+12)*3");
+    
     // D_STRING(inCalc, "14-2*3+7-3");
+    // D_STRING(inCalc, "3*5-2+6");
+    // D_STRING(inCalc, "(2+3)^3");
     // D_STRING(inCalc, "14-(2-4*5+33)*3");
     // D_STRING(inCalc, "5*(5+3)-5*(4+3)");
     // D_STRING(inCalc, "1*(5+(3*2)*(2+3))");
