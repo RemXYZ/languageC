@@ -24,6 +24,7 @@ UIlist addMenuOption(char *text, int (*callback)()){
     return menu;
 }
 void resetMenu() {
+    menu.head = 0;
     menu.size = 0;
     menu.callbacks[menu.size] = 0;
     strcpy(menu.texts[menu.size], "");

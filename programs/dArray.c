@@ -179,3 +179,112 @@ void dArrStringPrint(dArrString *arr) {
     dArrString NAME;\
     // D_ARR_STRING(NAME, ARR_STRING);
 
+
+
+
+typedef struct dDouble
+{
+    double* arr;
+    int maxLength;
+    int length;
+}dDouble;
+
+
+void dDoublePush(dDouble *arr, double v) {
+    arr->arr[arr->length] = v;
+    
+    arr->length++;
+    // work with array memory
+    int doRealloc = 0;
+    while (arr->maxLength <= arr->length){
+        arr->maxLength *= 2;
+        doRealloc = 1;
+    }
+    if (doRealloc) arr->arr = (double*) realloc(arr->arr, arr->maxLength * sizeof(double*));
+    
+}
+
+void dDoublePop(dDouble *arr, int howLong) {
+        // printf("[Len: %i, Ch: %c]\n",arr->length, arr->arr[arr->length - 2]);
+    for (int i = 1; i <= howLong; i++) {
+        // printf("[%c and %i]\n",arr->arr[arr->length-i], i);
+        arr->arr[arr->length - i] = 0;
+    }
+    arr->length -= howLong;
+    // printf("\nRGrgrg\n");
+    
+}
+void dDoubleClear(dDouble *arr) {
+    arr->arr[0] = 0;
+    arr->length = 0;
+}
+
+void dDoublePrint(dDouble *arr) {
+    printf("[~Array length: %d~]\n",arr->length);
+    for(int i = 0; i < arr->length; i++) {
+        printf("[Index:%d, Double: %f]\n",i,arr->arr[i]);
+    }
+    
+}
+
+#define D_DOUBLE(NAME)\
+    NAME.arr = (double*) malloc(2 * sizeof(double*));\
+    NAME.maxLength = 2;\
+    NAME.length = 0;
+
+
+
+
+
+typedef struct dInt
+{
+    int* arr;
+    int maxLength;
+    int length;
+}dInt;
+
+
+void dIntPush(dInt *arr, int v) {
+    arr->arr[arr->length] = v;
+    
+    arr->length++;
+    // work with array memory
+    int doRealloc = 0;
+    while (arr->maxLength <= arr->length){
+        arr->maxLength *= 2;
+        doRealloc = 1;
+    }
+    if (doRealloc) arr->arr = (int*) realloc(arr->arr, arr->maxLength * sizeof(int*));
+    
+}
+
+void dIntPop(dInt *arr, int howLong) {
+        // printf("[Len: %i, Ch: %c]\n",arr->length, arr->arr[arr->length - 2]);
+    for (int i = 1; i <= howLong; i++) {
+        // printf("[%c and %i]\n",arr->arr[arr->length-i], i);
+        arr->arr[arr->length - i] = 0;
+    }
+    arr->length -= howLong;
+    // printf("\nRGrgrg\n");
+    
+}
+void dIntClear(dInt *arr) {
+    arr->arr[0] = 0;
+    arr->length = 0;
+}
+
+void dIntPrint(dInt *arr) {
+    printf("[~Array length: %d~]\n",arr->length);
+    for(int i = 0; i < arr->length; i++) {
+        printf("[Index:%d, Int: %d]\n",i,arr->arr[i]);
+    }
+    
+}
+
+#define D_INT(NAME)\
+    NAME.arr = (int*) malloc(2 * sizeof(int*));\
+    NAME.maxLength = 2;\
+    NAME.length = 0;
+
+
+

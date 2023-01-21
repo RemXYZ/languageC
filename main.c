@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include <time.h>
 
 #include "./programs/dArrayFun.c"
 #include "./programs/dArray.c"
@@ -18,7 +19,18 @@
 #include "./programs/decToAny/decToAny.c"
     // decToAny()
 #include "./programs/calculator/calculator.c"
-    // decToAny()
+    //Operators[][8][16]
+    // splitExpr()
+    // toRPN()
+    // doArith()
+    // doArithFun()
+    // calculteRPN()
+    // calculator()
+#include "./programs/liczeniePi/liczeniePi.c"
+    // liczeniePi()
+#include "./programs/calkowanie/calkowanie.c"
+    // funSubstitution()
+    // integral()
 
 
 // INCLUDE MENU
@@ -130,31 +142,103 @@ int decToAnyApp() {
     return 1;
 }
 // Kalkulator zadanie 14 z zestawu 4
-int calculatorApp(){
-    printf("Proszę podać wyrażenie: ");
+int calculatorApp(int mode){
+    
+    printf("Prosze podac wyrazenie:\n");
     char expr[4096];
     fgets(expr, sizeof(expr), stdin);
-    dString inCalc;
-    D_STRING(inCalc, expr);
+    clearConsole();
+
+    // dString inCalc;
+    // D_STRING(inCalc, expr);
+    calculator(expr, mode);
+
+    printf("\n");
+    // free(inCalc.s);
+    optionExitMsg();
+    return 1;
+}
+
+// Nie wiem, czy istnieje lambda w C, zeby to wygladalo inaczej ?
+int calculatorMode1() {calculatorApp(1);}
+int calculatorMode2() {calculatorApp(2);}
+
+int calculatorMenu() {
+    printf("Prosze podac tryb wpisywana:\n");
+    char menuText[][4096] = {
+        "Zwykly zapis, np. (3+2)*2",
+        "Zapis w ONP, np. 3 2 + 2 * (posze robic spacje miedzy liczbami)",
+        "Wroc"
+    };
+    resetMenu();
+    addMenuOption(menuText[0], calculatorMode1);
+    addMenuOption(menuText[1], calculatorMode2);
+    addMenuOption(menuText[2], mainMenu);
+    clearConsole();
+    showMenu();
+}
+
+// Liczenie PI
+int PIApp() {
+    liczeniePi();
+    printf("\n");
+    optionExitMsg();
+    return 1;
+}
+
+int integralApp() {
+    clearConsole();
+    printf("~~~Calkowanie metoda prostokatow:~~~\n\n");
+
+    printf("Program pozwala uzywac nastepujace funkcje matematyczne:\n\
+FUNCTION - PRZYKLAD\n\
+sqrt()-  sqrt(4+12);\nsin() - sin(6)\ncos() - cos(6);\ntg() - tg(6);\nlog() - log(10)\n\n");
+    printf("Prosze podac funkcje:\n");
+    char fun[4096];
+    fgets(fun, sizeof(fun), stdin);
+
+    double a, b;
+    int n;
+    printf("Prosze podac poczatek przedzialu calkowania:\n");
+    scanf("%lf", &a);
+    printf("Prosze podac koniec przedzialu calkowania:\n");
+    scanf("%lf", &b);
+    printf("Prosze podac liczbe prostokatow \n(Im wiecej liczba, tym precezyjniej bedzie odpowiedz):\n");
+    scanf("%d", &n);
+
+    // dString inInteg;
+    // // D_STRING(inInteg, "1/(1+x^2)");
+    // // D_STRING(inInteg, "x+x^5");
+    // D_STRING(inInteg, "4^x");
+    dArrString rpnArr = toRPN(fun);
+    integral(&rpnArr, a, b, n);
+    dArrStringFree(&rpnArr);
+
+    printf("\n");
+    optionExitMsg();
     return 1;
 }
 
 // MAIN MENIU OPTIONS
 int mainMenu() {
     char menuText[][4096] = {
+        "Kalkulator",
+        "Calkowanie",
         "Silnia n!",
         "Dwumian Newtona ( n )\n\
                 ( k )", 
         "System dziesietny -> system *",
-        "Kalkulator",
+        "Liczenie liczby PI",
         "Exit"
     };
     resetMenu();
-    addMenuOption(menuText[0], silnaApp);
-    addMenuOption(menuText[1], dwNewtonaApp);
-    addMenuOption(menuText[2], decToAnyApp);
-    addMenuOption(menuText[3], calculatorApp);
-    addMenuOption(menuText[4], exitProgram);
+    addMenuOption(menuText[0], calculatorMenu);
+    addMenuOption(menuText[1], integralApp);
+    addMenuOption(menuText[2], silnaApp);
+    addMenuOption(menuText[3], dwNewtonaApp);
+    addMenuOption(menuText[4], decToAnyApp);
+    addMenuOption(menuText[5], PIApp);
+    addMenuOption(menuText[6], exitProgram);
     clearConsole();
     showMenu();
     return 1;
@@ -162,18 +246,38 @@ int mainMenu() {
 
 int main()
 {
-    
+    srand(time(0));
     // D_STRING(inCalc, "14-2*3+7-3");
     // D_STRING(inCalc, "3*5-2+6");
     // D_STRING(inCalc, "(2+3)^3");
     // D_STRING(inCalc, "14-(2-4*5+33)*3");
     // D_STRING(inCalc, "5*(5+3)-5*(4+3)");
-    // D_STRING(inCalc, "1*(5+(3*2)*(2+3))");
+    // dString inCalc;
+    // D_STRING(inCalc, "3*(1+4)+4");
+    // calculator(inCalc.s, 1);
+
     // dStringConcat(&inCalc, "LOL");
     // printf("%s", inCalc.s);
-    calculator(inCalc.s);
+    // int xd[10] = {20,30,40,50};
+    // dDouble lol;
+    // D_DOUBLE(lol);
+    // int i = 2;
+    // dDoublePush(&lol, i);
+    // dDoublePrint(&lol);
 
-    return 0;
+    // printf("XD: %d", (int)lol.arr[0]);
+
+
+    // dInt varPos;
+    // D_INT(varPos);
+    // for (int i = 0; i < 10; i++) {
+    //     dIntPush(&varPos, i);
+    // }
+    // dIntPrint(&varPos);
+    // return 0;
+    
+    
+    // return 0;
     mainMenu();
     // printf("%d",silniaLight(5));
     // return 0;

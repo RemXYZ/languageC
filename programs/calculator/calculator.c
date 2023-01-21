@@ -1,10 +1,46 @@
 // #include "../dArray.c"
 #include <math.h>
 
+// SOURCE: https://www.javatpoint.com/itoa-function-in-c
+char* itoa(int num, char* buffer, int base)   
+{  
+int current = 0;  
+if (num == 0) {  
+    buffer[current++] = '0';  
+    buffer[current] = '\0';  
+    return buffer;  
+}  
+int num_digits = 0;  
+if (num < 0) {  
+    if (base == 10) {  
+        num_digits ++;  
+        buffer[current] = '-';  
+        current ++;  
+        num *= -1;  
+    }  
+    else  
+        return NULL;  
+}  
+num_digits += (int)floor(log(num) / log(base)) + 1;  
+while (current < num_digits)   
+{  
+    int base_val = (int) pow(base, num_digits-1-current);  
+    int num_val = num / base_val;  
+    char value = num_val + '0';  
+    buffer[current] = value;  
+    current ++;  
+    num -= base_val * num_val;  
+}  
+buffer[current] = '\0';  
+return buffer;  
+}  
+
+//END OF SOURCE
+
 char Operators[][8][16] = {
     {"(",")","\0"},
     {"+","-","\0"},
-    {"*","/","%","\0"},
+    {"*","/","\0"},
     {"^","\0"},
     {"sin","cos","tg","ctg", "log", "sqrt", "\0"},
     {'\0'}
@@ -151,9 +187,20 @@ dArrString toRPN(char* expr){
     dArrString outStr;
     D_ARR_STRING(;outStr);
 
+    if (len == 0) {
+        dArrStringFree(&stos);
+        dArrStringFree(&stosW);
+        dArrStringFree(&splitedExpr);
+        dArrStringPush(&outStr, "");
+        return outStr;
+    }
+
     // converting to RPN
     for (int i = 0; i < splitedExpr.length; i++) {
         if (isdigit(splitedExpr.arr[i][0])) {
+            dArrStringPush(&outStr, splitedExpr.arr[i]);
+        }
+        if (isalpha(splitedExpr.arr[i][0])) {
             dArrStringPush(&outStr, splitedExpr.arr[i]);
         }
         //# THIS LOOP LOOKING FOR OPERATORS
@@ -178,6 +225,9 @@ dArrString toRPN(char* expr){
                 //# lub operator jest równy (
                 // printf("HIII  %s NUM %s\n", operator, splitedExpr.arr[i]);
                 if (!strcmp(operator, splitedExpr.arr[i])) {
+
+
+
                     // dArrStringPrint(&stos);
                     // printf("HELLO %s and %s\n", splitedExpr.arr[i], operator);
                     if ( (stos.length == 0) || (operator[0] == '(')) {
@@ -205,15 +255,16 @@ dArrString toRPN(char* expr){
                                 // printf("RGREGREGERER\n");
                                 dArrStringPush(&outStr, stos.arr[stI]);
                             }
+                            if ( (operator[0] == ')') & (stos.arr[stI][0] == '(') ) {
+                                stI = -1;
+                            }
                             
                             
                             dArrStringPop(&stos, 1);
                             dArrStringPop(&stosW, 1);
                             // printf("HII\n");
                             // printf("prev op2 %d\n", stos.arr[stI][0] == '(');
-                            if ( (operator[0] == ')') & (stos.arr[stI][0] == '(') ) {
-                                stI = -1;
-                            }
+                            
 
                             if ((stos.length == 0)) {
                                 dArrStringPush(&stos, splitedExpr.arr[i]);
@@ -228,6 +279,9 @@ dArrString toRPN(char* expr){
                             
                         }
                     }
+
+                    
+                    
                     
                 }
                 // printf("HI%s\n", operator);
@@ -237,6 +291,10 @@ dArrString toRPN(char* expr){
             }
             // weight++;
         }
+        // printf("STOS:\n");
+        // dArrStringPrint(&stos);
+        // printf("OUTSTR:\n");
+        // dArrStringPrint(&outStr);
     }
     int stI = stos.length-1;
     while( (stI >= 0)) {
@@ -267,14 +325,15 @@ dString doArith(char* aStr, char* bStr, char op) {
     double a = atof(aStr);
     double b = atof(bStr);
     double arith;
+    // printf("DO IT: %s, %s, %c\n", aStr, bStr, op);
     if (op == '+') {arith = a+b;}
     if (op == '-') {arith = a-b;}
     if (op == '*') {arith = a*b;}
     if (op == '/') {arith = a/b;}
     if (op == '^') {arith = pow(a,b);}
     
+    // printf("RESULT: %f\n",arith);
 
-    printf("DO IT: %s, %s, %c RESULT: %f\n", aStr, bStr, op, arith);
     char arithStr[256];
     sprintf(arithStr, "%f", arith);
     dString outStr;
@@ -287,7 +346,7 @@ dString doArith(char* aStr, char* bStr, char op) {
 dString doArithFun(char* aStr, char* op) {
     double a = atof(aStr);
     double arith = 0;
-    printf("\nRGERRE op %s and %d\n",op, !strcmp(op, "sin"));
+    // printf("\nRGERRE op %s and %d\n",op, !strcmp(op, "sin"));
     if (!strcmp(op, "sqrt")) {arith = sqrt(a);}
     if (!strcmp(op, "sin")) {arith = sin(a);}
     if (!strcmp(op, "cos")) {arith = cos(a);}
@@ -296,7 +355,7 @@ dString doArithFun(char* aStr, char* op) {
     if (!strcmp(op, "log")) {arith = log(a);}
     
 
-    printf("DO IT FUN : %s, %c RESULT: %f\n", aStr, op, arith);
+    // printf("DO IT FUN : %s, %c RESULT: %f\n", aStr, op, arith);
     char arithStr[256];
     sprintf(arithStr, "%f", arith);
     dString outStr;
@@ -305,16 +364,16 @@ dString doArithFun(char* aStr, char* op) {
     return outStr;
 }
 
-int calculteRPN(dArrString* rpn) {
+dArrString calculteRPN(dArrString* rpn) {
     dArrString stos;
     D_ARR_STRING(;stos);
-    int i = 0;
+    // int i = 0;
 
-    // for (int i = 0; i < rpn->length; i++) {
-    while( (i < 4096) ){
+    for (int i = 0; (i < (rpn->length) && (i < 4096)); i++) {
+    // while(  ){
         dArrStringPush(&stos, rpn->arr[i]);
         // printf("LOL %d\n", i);
-        dArrStringPrint(&stos);
+        // dArrStringPrint(&stos);
 
         for (int weight = 0; weight < OperatorsLines; weight++){
             char weightCh[4];
@@ -337,11 +396,28 @@ int calculteRPN(dArrString* rpn) {
                         || rpn->arr[i][0] == '/' \
                         || rpn->arr[i][0] == '^'
                         ) {
-                        dString arith = doArith(stos.arr[stos.length-3], stos.arr[stos.length-2], rpn->arr[i][0]);
-                        printf("arith %s stos: %s %s\n", arith.s, stos.arr[stos.length-3], stos.arr[stos.length-2]);
-                        dArrStringPop(&stos, 3); // remove operator, // remove first number, // remove second number
-                        dArrStringPush(&stos, arith.s);
-                        free(arith.s);
+                            // if ( ( i != rpn->length) && (rpn->arr[i][0] == '-' && rpn->arr[i+1][0] == '-')){
+                                
+                            // }
+                            dString arith;
+                            if (stos.length == 0) {
+                                printf("Odpowiedz: EMPTY");
+                                return stos;
+                            }
+                            else if (stos.length == 1) {
+                                return stos;
+                            }
+                            else if (stos.length == 2) {
+                                arith = doArith("0\0", stos.arr[stos.length-2], rpn->arr[i][0]);
+                                dArrStringPop(&stos, 2);
+                            }else {
+                                arith = doArith(stos.arr[stos.length-3], stos.arr[stos.length-2], rpn->arr[i][0]);
+                                dArrStringPop(&stos, 3); // remove operator, // remove first number, // remove second number
+                            }
+                            // printf("arith %s stos: %s %s\n", arith.s, stos.arr[stos.length-3], stos.arr[stos.length-2]);
+                            
+                            dArrStringPush(&stos, arith.s);
+                            free(arith.s);
                     }
                     // || operator == "sin"\
                     //     || operator == "cos"\
@@ -356,10 +432,13 @@ int calculteRPN(dArrString* rpn) {
                         || !strcmp(rpn->arr[i], "ctg")\
                         || !strcmp(rpn->arr[i], "log")
                     ) {
-                        printf("FUUUUN %s\n", rpn->arr[i] );
+                        if (stos.length == 1) {
+                            return stos;
+                        }
+                        // printf("FUUUUN %s\n", rpn->arr[i] );
                         dString arith = doArithFun(stos.arr[stos.length-2], rpn->arr[i]);
                         
-                        printf("FUUUUN arith %s stos: %s %s\n", arith.s, stos.arr[0], stos.arr[1]);
+                        // printf("FUUUUN arith %s stos: %s %s\n", arith.s, stos.arr[0], stos.arr[1]);
                         dArrStringPop(&stos, 2); // remove operator, // remove first number, // remove second number
                         dArrStringPush(&stos, arith.s);
                         free(arith.s);
@@ -370,21 +449,42 @@ int calculteRPN(dArrString* rpn) {
                 operI++;  
             }
         }
-        if (i == (rpn->length-1)) {
-            break;
-        }
-        i++;
+        // if (i == (rpn->length-1)) {
+        //     break;
+        // }
+        // i++;
     }
-    printf("HIII RESULT:\n\n");
-    dArrStringPrint(&stos);
-    return 0;
+    // printf("HIII RESULT:\n\n");
+    // dArrStringPrint(&stos);
+    return stos;
 }
 
+// {"sin","cos","tg","ctg", "log", "sqrt", "\0"},
 // expr = expression
-int calculator(char* expr) {
+int calculator(char* expr, int mode) {
+printf("Tryb: %d, program pozwala uzywac nastepujace funkcje:\n\
+FUNCTION - PRZYKLAD\n\
+sqrt()-  sqrt(4+12);\nsin() - sin(6)\ncos() - cos(6);\ntg() - tg(6);\nlog() - log(10)\n\n", mode);
+    dArrString rpnArr;
+    switch (mode)
+    {
+    case 1:
+        rpnArr = toRPN(expr);
+        break;
+    case 2:
+        rpnArr = splitExpr(expr);
+        // dArrStringPrint(&rpnArr);
+        break;
     
-    dArrString rpnArr = toRPN(expr);
-    dArrStringPrint(&rpnArr);
-    printf("-----\n");
-    calculteRPN(&rpnArr);
+    // default:
+    //     break;
+    }
+    // dArrStringPrint(&rpnArr);
+    // printf("-----\n");
+    dArrString result = calculteRPN(&rpnArr);
+    printf("Odpowiedz: %s", result.arr[0]);
+    dArrStringFree(&result);
+    
+    dArrStringFree(&rpnArr);
+    return 0;
 }
