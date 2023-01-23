@@ -149,8 +149,16 @@ void dArrStringPop(dArrString *arr, int howLong) {
         // arr->arr[arr->length - i] = 0;
     }
     arr->length -= howLong;
-
 }
+
+void dArrStringInsertRemNext(dArrString *arr, int i, const char* str) {
+    strcpy(arr->arr[i], str);
+    for(int j = (i+1); j < (arr->length-1); j++) {
+        strcpy(arr->arr[j], arr->arr[j+1]);
+    }
+    dArrStringPop(arr, 1);
+}
+
 void dArrStringFree(dArrString *arr) {
     dArrStringPop(arr,arr->length);
     free(arr->arr);

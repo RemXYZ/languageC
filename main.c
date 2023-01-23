@@ -26,6 +26,9 @@
     // doArithFun()
     // calculteRPN()
     // calculator()
+#include "./programs/calkowanie/posVal.c"
+// findVarPos()
+// funSubstitution()
 #include "./programs/liczeniePi/liczeniePi.c"
     // liczeniePi()
 #include "./programs/calkowanie/calkowanie.c"
@@ -275,7 +278,20 @@ int main()
     // }
     // dIntPrint(&varPos);
     // return 0;
-    
+    // dArrString lol;
+    // D_ARR_STRING(;lol);
+    // dArrStringPush(&lol, "Heh");
+    // dArrStringPush(&lol, "lol");
+    // dArrStringPush(&lol, "))");
+    // dArrStringPush(&lol, ")");
+    // dArrStringPush(&lol, ")");
+
+    // dArrStringPop(&lol, 1);
+    // dArrStringPrint(&lol);
+    // return 0;
+
+    // char expr[4096] = "sqrt(sqrt(16^2))";
+    // calculator(expr, 1);
     
     // return 0;
     mainMenu();

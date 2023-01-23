@@ -48,6 +48,115 @@ char Operators[][8][16] = {
 int OperatorsLines = 5;
 char OperatorFun[][16] = {"sin","cos","tg","ctg", "log", "sqrt"};
 
+//23.01.23
+// int validateExpr(dArrString* expr) {
+//     return 1;
+// }
+
+void errorMsg(dArrString* exrp, int i) {
+    printf("Error in position %d\n", i);
+    for (int k = 0; k < exrp->length; k++) {
+        printf("%s", exrp->arr[k]);
+    }
+    printf("\n");
+}
+
+int validateExpr(dArrString* expr) {
+    int bracketsCount = 0;
+    // dArrStringPrint(expr);
+    for (int i = 0; i < expr->length; i++) {
+
+        for (int weight = 0; weight < OperatorsLines; weight++){
+            //# operator index
+            //# second square brackets {""}
+            int operI = 0;
+            while(Operators[weight][operI][0] != '\0') {
+                //# third square brackets {"(",")","\0"},
+                char* operator = Operators[weight][operI];
+                // printf("%c lol %c is var ? %d\n",expr[i], operator[0], isVar);
+                int operLen = strlen(operator);
+                //# if char is operator
+                //# strcmp string compre - porównuje string, zwraca 0 jeśli są równe
+                //# lub operator jest równy (
+                // printf("%d ", operI);
+                // printf("XD\n");
+                if (!strcmp(operator, expr->arr[i])) {
+                    if (!strcmp(operator, "(")) {
+                        bracketsCount++;
+                    }
+                    if (!strcmp(operator, ")")) {
+                        bracketsCount--;
+                    }
+                    int fixed = 0;
+                    int isVar = 1;
+                    int isVarMe = isVarMe = isdigit(*expr->arr[i]) || isalpha(*expr->arr[i]);
+                    //# IF SOME OPERATOR ON THE END
+                    if ((i == (expr->length-1))\
+                        && strcmp(operator, "(")\
+                        && strcmp(operator, ")")\
+                        && strcmp(operator, "!")
+                    ) {
+                        errorMsg(expr, i);
+                        return 0;
+                    }
+                    if (i != (expr->length-1)) isVar = isdigit(*expr->arr[i+1]) || isalpha(*expr->arr[i+1]);
+                    
+                    if (isVar == 0) {
+                        //# IF -- -> +
+                        if (!strcmp(expr->arr[i+1], "-") && !strcmp(operator, "-")) {
+                            dArrStringInsertRemNext(expr, i, "+");
+                            fixed = 1;
+                        }
+                        //# IF -(- -> +
+                        if (i != (expr->length-2)) {
+                            if (!strcmp(operator, "-") && !strcmp(expr->arr[i+1], "(") && !strcmp(expr->arr[i+2], "-")) {
+                                dArrStringInsertRemNext(expr, i, "+");
+                                strcpy(expr->arr[i+1], "(");
+                                fixed = 1;
+                            }
+                        }
+                        //# IF ** -> ^
+                        if (!strcmp(expr->arr[i+1], "*") && !strcmp(operator, "*")) {
+                            dArrStringInsertRemNext(expr, i, "^");  
+                            fixed = 1;
+                        }
+                        if (!strcmp(operator, ")") || !strcmp(operator, "(")) {
+                            fixed = 1;
+                        }
+                        if ((i != (expr->length-1) && (!strcmp(expr->arr[i+1], ")") || !strcmp(expr->arr[i+1], "(")))) {
+                            fixed = 1;
+                        }
+
+                        //# IF funtion
+                        for (int f = 0; f < sizeof(OperatorFun)/sizeof(*OperatorFun); f++) {
+                            if (!strcmp(expr->arr[i], OperatorFun[f]))
+                                fixed = 1;
+                        }
+                        //# IF funtion
+                        if (i != (expr->length-1)) {
+                            for (int f = 0; f < sizeof(OperatorFun)/sizeof(*OperatorFun); f++) {
+                                if (!strcmp(expr->arr[i+1], OperatorFun[f]))
+                                    fixed = 1;
+                            }
+                        }
+                        // printf("JEST me %s, next %s, fixed? %d\n",expr->arr[i], expr->arr[i+1], fixed);
+                        // dArrStringPrint(expr);
+                        if (fixed == 0) {
+                            errorMsg(expr, i);
+                            // printf("ERROR me %s, next %s, fixed? %d\n",expr->arr[i], expr->arr[i+1], fixed);
+                            return 0;
+                        }
+                    }
+                }
+                operI++;
+            }
+            
+        }
+    }
+    // printf("MMM %d\n", bracketsCount);
+    if (bracketsCount != 0) return 0;
+    return 1;
+}
 
 dArrString splitExpr(char* expr) {
     int len = strlen(expr);
@@ -174,6 +283,12 @@ dArrString toRPN(char* expr){
     // printf("%s, LEN: %d FFFFFFFFFFFFFFFEWEFWEFWE\n\n\n\n\n", expr, len);
     
     dArrString splitedExpr = splitExpr(expr);
+    //# VALIDATE
+    int validateBool = validateExpr(&splitedExpr);
+    if (validateBool == 0) {
+        strcpy(splitedExpr.arr[0], "ERROR");
+        return splitedExpr;
+    }
     // printf("DATA\n");
     // dArrStringPrint(&splitedExpr);
     // printf("\n");
@@ -201,7 +316,14 @@ dArrString toRPN(char* expr){
             dArrStringPush(&outStr, splitedExpr.arr[i]);
         }
         if (isalpha(splitedExpr.arr[i][0])) {
-            dArrStringPush(&outStr, splitedExpr.arr[i]);
+            int isFunction = 0;
+            for (int j = 0; j < sizeof(OperatorFun)/sizeof(*OperatorFun); j++) {
+                if (!strcmp(splitedExpr.arr[i], OperatorFun[j]))
+                    isFunction = 1;
+            }
+            if (!isFunction){
+                dArrStringPush(&outStr, splitedExpr.arr[i]);
+            }
         }
         //# THIS LOOP LOOKING FOR OPERATORS
         //# first square brackets {},
@@ -481,10 +603,16 @@ sqrt()-  sqrt(4+12);\nsin() - sin(6)\ncos() - cos(6);\ntg() - tg(6);\nlog() - lo
     }
     // dArrStringPrint(&rpnArr);
     // printf("-----\n");
+    if (!strcmp(rpnArr.arr[0], "ERROR")) {
+        printf("ERROR");
+        return 0;
+    }
+    dArrStringPrint(&rpnArr);
     dArrString result = calculteRPN(&rpnArr);
-    printf("Odpowiedz: %s", result.arr[0]);
+
+    printf("\n%sjest rowne: %s",expr, result.arr[0]);
     dArrStringFree(&result);
     
     dArrStringFree(&rpnArr);
-    return 0;
+    return 1;
 }
